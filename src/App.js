@@ -8,12 +8,21 @@ function App() {
   const [data, setData] = useState({});
   const token = "64371d1b7bdc43b99bd945817c7d0429";
   const url = "https://api.spotify.com/v1/me/tracks";
-  const { getToken, searchTrack } = useSpotifyApi(url, token);
+  const { getToken, searchTrack, login } = useSpotifyApi(url, token);
 
   const changeUser = () => {
     // refreshData();
     getToken();
   };
+
+  useEffect(() => {
+    // En la página de la URI de redirección
+    const code = new URL(window.location.href).searchParams.get("code");
+
+    if (code) {
+      console.log("code", code);
+    }
+  }, []);
 
   return (
     <div className="App">
@@ -30,6 +39,14 @@ function App() {
         </a>
         <input type="text" onChange={(e) => setData(e.target.value)} />
         <button onClick={() => searchTrack(data)}>Buscar</button>
+        <hr />
+        <button
+          onClick={() => {
+            login();
+          }}
+        >
+          login
+        </button>
         {/* <button onClick={() => getToken()}>Get token</button>
         <button onClick={() => changeUser()}>Change user</button> */}
       </header>
