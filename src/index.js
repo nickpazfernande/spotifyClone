@@ -4,7 +4,16 @@ import "./index.css";
 import App from "./App";
 import ErrorPage from "./pages/notFoundPage";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import {
+  makeStyles,
+  Drawer,
+  List,
+  ListItem,
+  ListItemText,
+} from "@material-ui/core";
 import Root from "./routes/Root";
+import Search from "./pages/Search";
+
 const router = createBrowserRouter([
   {
     path: "/",
@@ -15,13 +24,17 @@ const router = createBrowserRouter([
         path: "/login",
         element: <App />,
       },
+      {
+        path: "/search",
+        element: <Search />,
+      }
     ],
   },
   {
     path: "/login",
     element: <App />,
     errorElement: <ErrorPage />,
-  },
+  }
 ]);
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
