@@ -13,6 +13,7 @@ import {
 } from "@material-ui/core";
 import Root from "./routes/Root";
 import Search from "./pages/Search";
+import YourLibrary from "./pages/YourLibrary";
 
 const router = createBrowserRouter([
   {
@@ -27,6 +28,11 @@ const router = createBrowserRouter([
       {
         path: "/search",
         element: <Search />,
+      },
+      {
+        path: "/your-library",
+        element: <YourLibrary />,
+
       }
     ],
   },

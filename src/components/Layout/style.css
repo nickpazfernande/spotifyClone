@@ -1,3 +1,9 @@
-.text-white{
-    color: #fff;
+.text-white {
+  color: #fff;
+}
+
+.active {
+  /* Active darkmode */
+  background-color: #303030;
+  color: #fff;
 }

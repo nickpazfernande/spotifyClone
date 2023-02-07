@@ -1,4 +1,4 @@
-import * as React from "react";
+import React, { useState, useEffect } from "react";
 import Box from "@mui/material/Box";
 import Drawer from "@mui/material/Drawer";
 import CssBaseline from "@mui/material/CssBaseline";
@@ -17,13 +17,23 @@ import HomeIcon from "@mui/icons-material/Home";
 import LoginIcon from "@mui/icons-material/Login";
 import SearchIcon from "@mui/icons-material/Search";
 import { ThemeProvider } from "@mui/material/styles";
+import LibraryMusicIcon from "@mui/icons-material/LibraryMusic";
 import theme from "../../theme/theme";
-import { Outlet, Link } from "react-router-dom";
+import { Outlet, Link, useLocation } from "react-router-dom";
+
 import "./style.css";
 
 const drawerWidth = 240;
 
 export default function PermanentDrawerLeft(props) {
+  const location = useLocation();
+  const [active, setActive] = useState("/");
+
+  useEffect(() => {
+    setActive(location.pathname);
+    console.log(location.pathname);
+  }, [location]);
+
   return (
     <ThemeProvider theme={theme}>
       <Box sx={{ display: "flex" }}>
@@ -42,7 +52,6 @@ export default function PermanentDrawerLeft(props) {
               noWrap
               component="div"
               className="text-white"
-              //Align items to the right
               sx={{ flexGrow: 1, textAlign: "right" }}
             >
               Spotify Clone
@@ -64,7 +73,7 @@ export default function PermanentDrawerLeft(props) {
           <Toolbar />
           <Divider />
           <List>
-            <ListItem>
+            <ListItem className={active === "/" ? "active" : ""}>
               <ListItemButton component={Link} to="/">
                 <ListItemIcon>
                   <HomeIcon />
@@ -73,7 +82,7 @@ export default function PermanentDrawerLeft(props) {
               </ListItemButton>
             </ListItem>
 
-            <ListItem>
+            <ListItem className={active === "/login" ? "active" : ""}>
               <ListItemButton component={Link} to="/login">
                 <ListItemIcon>
                   <LoginIcon />
@@ -82,12 +91,8 @@ export default function PermanentDrawerLeft(props) {
               </ListItemButton>
             </ListItem>
 
-            <ListItem>
-              <ListItemButton
-                component={Link}
-                to="/search"
-                //Active?
-              >
+            <ListItem className={active === "/search" ? "active" : ""}>
+              <ListItemButton component={Link} to="/search">
                 <ListItemIcon>
                   <SearchIcon />
                 </ListItemIcon>
@@ -95,12 +100,12 @@ export default function PermanentDrawerLeft(props) {
               </ListItemButton>
             </ListItem>
 
-            <ListItem>
-              <ListItemButton>
+            <ListItem className={active === "/your-library" ? "active" : ""}>
+              <ListItemButton component={Link} to="/your-library">
                 <ListItemIcon>
-                  <HomeIcon />
+                  <LibraryMusicIcon />
                 </ListItemIcon>
-                <ListItemText primary="Home" href={`/`} />
+                <ListItemText primary="Your Library"></ListItemText>
               </ListItemButton>
             </ListItem>
           </List>
@@ -125,8 +130,6 @@ export default function PermanentDrawerLeft(props) {
           <div>
             <p></p>
             {props.children}
-
-            {/* Outlet react router */}
             <Outlet />
           </div>
         </Box>
