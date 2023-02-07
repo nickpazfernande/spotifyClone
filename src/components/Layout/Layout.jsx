@@ -126,10 +126,9 @@ export default function PermanentDrawerLeft(props) {
         <Box
           component="main"
           sx={{ flexGrow: 1, bgcolor: "background.default", p: 3 }}
+          style={{ marginTop: "64px" }}
         >
           <div>
-            <p></p>
-            {props.children}
             <Outlet />
           </div>
         </Box>

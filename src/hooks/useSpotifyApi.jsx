@@ -18,6 +18,8 @@ const useSpotifyApi = (url, token) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  const [finalCode, setFinalCode] = useState(null);
+
   useEffect(() => {
     getToken();
   }, []);
@@ -89,8 +91,46 @@ const useSpotifyApi = (url, token) => {
       });
   };
 
+  const getMe = (code) => {
+    var authParameters = {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+        authorization: "Basic " + btoa(client_id + ":" + client_secret),
+      },
+      body:
+        "grant_type=authorization_code&code=" +
+        code +
+        "&redirect_uri=" +
+        redirect_uri,
+    };
+
+    let authorization_code = "";
+
+    fetch(urlSpotify, authParameters) //next save the token
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(accessToken);
+        authorization_code = data.access_token;
+
+        fetch("https://api.spotify.com/v1/me", {
+          method: "GET",
+          headers: {
+            Authorization: "Bearer " + authorization_code,
+          },
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            console.log(data);
+            //save in local storage
+            localStorage.setItem("user", JSON.stringify(data));
+          })
+          .catch((error) => console.log(error));
+      })
+      .catch((error) => console.log(error));
+  };
   // https://accounts.spotify.com/authorize?client_id= &scope=playlist-read-private playlist-read-collaborative playlist-modify-public playlist-modify-private user-follow-read user-follow-modify user-library-read user-library-modify user-read-birthdate user-read-email user-read-private streaming user-top-read&response_type=token&redirect_uri=https://discoverquickly.com/&state=I3ISM0jNbmkppuPE
-  return { getToken, searchTrack, login };
+  return { getToken, searchTrack, login, getMe };
 };
 
 export default useSpotifyApi;

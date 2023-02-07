@@ -28,6 +28,8 @@ function App() {
 
     if (code) {
       console.log("code", code);
+      // set in local storage
+      localStorage.setItem("code", code);
     }
   }, []);
 
