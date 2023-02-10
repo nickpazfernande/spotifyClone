@@ -20,29 +20,35 @@ const useSpotifyApi = (url, token) => {
 
   const [finalCode, setFinalCode] = useState(null);
 
-  useEffect(() => {
-    getToken();
-  }, []);
-
   const getToken = () => {
-    var authParameters = {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
-      },
-      body:
-        "grant_type=client_credentials&client_id=" +
-        client_id +
-        "&client_secret=" +
-        client_secret,
-    };
-    fetch(urlSpotify, authParameters) //next save the token
-      .then((response) => response.json())
-      .then((data) => {
-        setAccessToken(data.access_token);
-        console.log(accessToken);
-      })
-      .catch((error) => console.log(error));
+    //New promise to get token
+    return new Promise((resolve, reject) => {
+      //Get the code from local storage
+      const storedCode = localStorage.getItem("accessToken");
+      // If there is a code, set it to the state
+      if (storedCode) {
+        var authParameters = {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
+          body:
+            "grant_type=client_credentials&client_id=" +
+            client_id +
+            "&client_secret=" +
+            client_secret,
+        };
+        resolve(
+          fetch(urlSpotify, authParameters) //next save the token
+            .then((response) => response.json())
+            .then((data) => {
+              setAccessToken(data.access_token);
+              console.log(accessToken);
+            })
+            .catch((error) => console.log(error))
+        );
+      }
+    });
   };
 
   const searchTrack = (search) => {
@@ -71,10 +77,8 @@ const useSpotifyApi = (url, token) => {
   const login = () => {
     // Redirige al usuario a la URL de autorización
     window.location.href = authorizeUrl;
-
     // En la página de la URI de redirección
     const code = new URL(window.location.href).searchParams.get("code");
-
     // Usa el código para solicitar un token de acceso
     fetch("https://accounts.spotify.com/api/token", {
       method: "POST",
@@ -86,50 +90,56 @@ const useSpotifyApi = (url, token) => {
     })
       .then((response) => response.json())
       .then((data) => {
-        // Aquí deberías tener un objeto con los detalles del token de acceso
+        // Save final token, user spotify
+        setFinalCode(data.access_token);
+        localStorage.setItem("finalAccessToken", data.access_token);
         console.log(data);
       });
   };
 
-  const getMe = (code) => {
-    var authParameters = {
-      method: "POST",
+  // const getFinalCode = (code) => {
+  //   var authParameters = {
+  //     method: "POST",
+  //     headers: {
+  //       "Content-Type": "application/x-www-form-urlencoded",
+  //       authorization: "Basic " + btoa(client_id + ":" + client_secret),
+  //     },
+  //     body:
+  //       "grant_type=authorization_code&code=" +
+  //       code +
+  //       "&redirect_uri=" +
+  //       redirect_uri,
+  //   };
+
+  //   let authorization_code = "";
+
+  //   fetch(urlSpotify, authParameters) //next save the token
+  //     .then((response) => response.json())
+  //     .then((data) => {
+  //       console.log(data);
+  //       authorization_code = data.access_token;
+  //       setFinalCode(data.access_token);
+  //     })
+  //     .catch((error) => console.log(error));
+  // };
+
+  const getMe = () => {
+    const storedCode = localStorage.getItem("finalAccessToken");
+    
+    fetch("https://api.spotify.com/v1/me", {
+      method: "GET",
       headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
-        authorization: "Basic " + btoa(client_id + ":" + client_secret),
+        Authorization: "Bearer " + storedCode,
       },
-      body:
-        "grant_type=authorization_code&code=" +
-        code +
-        "&redirect_uri=" +
-        redirect_uri,
-    };
-
-    let authorization_code = "";
-
-    fetch(urlSpotify, authParameters) //next save the token
+    })
       .then((response) => response.json())
       .then((data) => {
-        console.log(accessToken);
-        authorization_code = data.access_token;
-
-        fetch("https://api.spotify.com/v1/me", {
-          method: "GET",
-          headers: {
-            Authorization: "Bearer " + authorization_code,
-          },
-        })
-          .then((response) => response.json())
-          .then((data) => {
-            console.log(data);
-            //save in local storage
-            localStorage.setItem("user", JSON.stringify(data));
-          })
-          .catch((error) => console.log(error));
+        console.log(data);
+        //save in local storage
+        localStorage.setItem("user", JSON.stringify(data));
       })
       .catch((error) => console.log(error));
   };
-  // https://accounts.spotify.com/authorize?client_id= &scope=playlist-read-private playlist-read-collaborative playlist-modify-public playlist-modify-private user-follow-read user-follow-modify user-library-read user-library-modify user-read-birthdate user-read-email user-read-private streaming user-top-read&response_type=token&redirect_uri=https://discoverquickly.com/&state=I3ISM0jNbmkppuPE
   return { getToken, searchTrack, login, getMe };
 };
 

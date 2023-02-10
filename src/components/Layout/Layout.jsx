@@ -20,6 +20,7 @@ import { ThemeProvider } from "@mui/material/styles";
 import LibraryMusicIcon from "@mui/icons-material/LibraryMusic";
 import theme from "../../theme/theme";
 import { Outlet, Link, useLocation } from "react-router-dom";
+import useSpotifyApi from "../../hooks/useSpotifyApi";
 
 import "./style.css";
 
@@ -29,10 +30,42 @@ export default function PermanentDrawerLeft(props) {
   const location = useLocation();
   const [active, setActive] = useState("/");
 
+  const [code, setCode] = useState(null);
+  const [accessToken, setAccessToken] = useState(null);
+  const [refreshToken, setRefreshToken] = useState(null);
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [user, setUser] = useState(null);
+  const { getToken, searchTrack, login, data, getMe } = useSpotifyApi();
+
   useEffect(() => {
     setActive(location.pathname);
-    console.log(location.pathname);
   }, [location]);
+
+  useEffect(() => {
+    // If there is no code, check for one in the URL
+    const code = new URL(window.location.href).searchParams.get("code");
+    // exist code ? set in local storage
+    if (code) {
+      console.log("code", code);
+      // set in local storage
+      localStorage.setItem("code", code);
+    }
+    // Get the code from local storage
+    const storedCode = localStorage.getItem("code");
+    // If there is a code, set it to the state
+    if (storedCode) {
+      setCode(storedCode);
+    }
+    //Get info user from local storage, if exists
+    const storedUser = localStorage.getItem("user");
+    if (storedUser) {
+      //storedUSer to json, and save in state
+      setUser(JSON.parse(storedUser));
+      console.log(JSON.parse(storedUser));
+    }
+    getMe();
+  }, []);
 
   return (
     <ThemeProvider theme={theme}>
@@ -46,8 +79,8 @@ export default function PermanentDrawerLeft(props) {
             bgcolor: "background.default",
           }}
         >
-          <Toolbar>
-            <Typography
+          <Toolbar className="navBar">
+            {/* <Typography
               variant="h6"
               noWrap
               component="div"
@@ -55,7 +88,11 @@ export default function PermanentDrawerLeft(props) {
               sx={{ flexGrow: 1, textAlign: "right" }}
             >
               Spotify Clone
-            </Typography>
+            </Typography> */}
+            <button onClick={() => getMe()}>get data</button>
+            <button className="button-login" onClick={() => login()}>
+              Log In
+            </button>
           </Toolbar>
         </AppBar>
         <Drawer

@@ -3,10 +3,6 @@ import useSpotifyApi from "../hooks/useSpotifyApi";
 
 const YourLibrary = () => {
   const [code, setCode] = useState(null);
-  const [accessToken, setAccessToken] = useState(null);
-  const [refreshToken, setRefreshToken] = useState(null);
-  const [error, setError] = useState(null);
-  const [loading, setLoading] = useState(true);
   const [user, setUser] = useState(null);
 
   const { data, getMe } = useSpotifyApi();
