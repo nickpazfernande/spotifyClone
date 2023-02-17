@@ -83,10 +83,10 @@ export default function PermanentDrawerLeft(props) {
           }}
         >
           <Toolbar className="navBar">
-            {user != null ? (
+            {user ? (
               <div className="user-info">
                 <img
-                  src={user.images[0].url}
+                  src={user.images[0].url || ""}
                   className="img-perfil"
                   width="10px"
                   alt=""

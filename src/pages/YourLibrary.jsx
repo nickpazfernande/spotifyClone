@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from "react";
+import FollowLibrary from "../containers/FollowLibrary/FollowLibrary";
 import useSpotifyApi from "../hooks/useSpotifyApi";
 
 const YourLibrary = () => {
   const [code, setCode] = useState(null);
   const [user, setUser] = useState(null);
-
-  const { data, getMe, getFollowPlaylist } = useSpotifyApi();
-
+  const { data, getMe, getFollowPlaylist, followLibrary } = useSpotifyApi();
 
   useEffect(() => {
     // Get the code from local storage
@@ -20,27 +19,18 @@ const YourLibrary = () => {
     if (storedUser) {
       //storedUSer to json, and save in state
       setUser(JSON.parse(storedUser));
-      console.log(JSON.parse(storedUser));
     }
+    // Get follow playlist
+    getFollowPlaylist();
   }, []);
 
   return (
     <>
-      <button onClick={() => getFollowPlaylist()}>your library</button>
-      <div>YourLibrary</div>
-      <p>{code}</p>
-      <button onClick={() => getMe(code)}>Get info </button>
-      {user ? (
-        <>
-          <img src={user.images[0].url} alt="" />
-          <p>{user.display_name}</p>
-          {/* Plan */}
-          <p>Plan: {user.product} </p>
-          <p>Country: {user.country}</p>
-          <p>Email: {user.email}</p>
-        </>
+      <h1>Follow Library</h1>
+      {followLibrary ? (
+        <div>{<FollowLibrary FollowLibrary={followLibrary} />}</div>
       ) : (
-        <p>No user</p>
+        <p>No follow Library</p>
       )}
     </>
   );

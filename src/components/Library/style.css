@@ -1,0 +1,45 @@
+.card {
+  background-color: #242424;
+  width: 200px;
+  height: 300px;
+  overflow: hidden;
+  border-radius: 10px;
+  padding: 12px;
+}
+
+.card:hover {
+  background-color: #1a1a1a;
+  cursor: pointer;
+}
+
+.img {
+  width: 100%;
+  object-fit: cover;
+  border-radius: 10px;
+}
+
+.description {
+  color: #7a7a7a;
+  font-size: 14px;
+  margin-top: 8px;
+  height: 100%;
+  overflow: hidden;
+  margin-bottom: 30px;
+}
+
+.button-open {
+  position: absolute;
+  bottom: 50px;
+  left: 60%;
+  border-radius: 20px !important;
+  width: 15px !important;
+}
+
+.title{
+    color: #fff;
+    font-size: 16px;
+    font-weight: 600;
+    margin: 0;
+}
+
+

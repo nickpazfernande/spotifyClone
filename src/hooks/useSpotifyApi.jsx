@@ -19,6 +19,7 @@ const useSpotifyApi = (url, token) => {
   const [error, setError] = useState(null);
 
   const [finalCode, setFinalCode] = useState(null);
+  const [followLibrary, setFollowLibrary] = useState();
 
   const getToken = () => {
     //New promise to get token
@@ -126,15 +127,23 @@ const useSpotifyApi = (url, token) => {
     })
       .then((response) => response.json())
       .then((data) => {
+        //convert data to array
+        
+
+        setFollowLibrary(data);
         console.log(data);
-        //save in local storage
-        localStorage.setItem("user", JSON.stringify(data));
-        return data;
       })
       .catch((error) => console.log(error));
   };
 
-  return { getToken, searchTrack, login, getMe, getFollowPlaylist };
+  return {
+    getToken,
+    searchTrack,
+    login,
+    getMe,
+    getFollowPlaylist,
+    followLibrary,
+  };
 };
 
 export default useSpotifyApi;
