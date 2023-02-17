@@ -5,7 +5,8 @@ const YourLibrary = () => {
   const [code, setCode] = useState(null);
   const [user, setUser] = useState(null);
 
-  const { data, getMe } = useSpotifyApi();
+  const { data, getMe, getFollowPlaylist } = useSpotifyApi();
+
 
   useEffect(() => {
     // Get the code from local storage
@@ -25,6 +26,7 @@ const YourLibrary = () => {
 
   return (
     <>
+      <button onClick={() => getFollowPlaylist()}>your library</button>
       <div>YourLibrary</div>
       <p>{code}</p>
       <button onClick={() => getMe(code)}>Get info </button>

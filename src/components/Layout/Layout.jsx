@@ -59,7 +59,10 @@ export default function PermanentDrawerLeft(props) {
     }
     //Get info user from local storage, if exists
     const storedUser = localStorage.getItem("user");
-    if (storedUser) {
+    if (
+      storedUser &&
+      storedUser !== '{"error":{"status":401,"message":"Invalid access token"}}'
+    ) {
       //storedUSer to json, and save in state
       setUser(JSON.parse(storedUser));
       console.log(JSON.parse(storedUser));
@@ -80,19 +83,21 @@ export default function PermanentDrawerLeft(props) {
           }}
         >
           <Toolbar className="navBar">
-            {/* <Typography
-              variant="h6"
-              noWrap
-              component="div"
-              className="text-white"
-              sx={{ flexGrow: 1, textAlign: "right" }}
-            >
-              Spotify Clone
-            </Typography> */}
-            <button onClick={() => getMe()}>get data</button>
-            <button className="button-login" onClick={() => login()}>
-              Log In
-            </button>
+            {user != null ? (
+              <div className="user-info">
+                <img
+                  src={user.images[0].url}
+                  className="img-perfil"
+                  width="10px"
+                  alt=""
+                />
+                {user.display_name}
+              </div>
+            ) : (
+              <button className="button-login" onClick={() => login()}>
+                Log In
+              </button>
+            )}
           </Toolbar>
         </AppBar>
         <Drawer

@@ -97,35 +97,9 @@ const useSpotifyApi = (url, token) => {
       });
   };
 
-  // const getFinalCode = (code) => {
-  //   var authParameters = {
-  //     method: "POST",
-  //     headers: {
-  //       "Content-Type": "application/x-www-form-urlencoded",
-  //       authorization: "Basic " + btoa(client_id + ":" + client_secret),
-  //     },
-  //     body:
-  //       "grant_type=authorization_code&code=" +
-  //       code +
-  //       "&redirect_uri=" +
-  //       redirect_uri,
-  //   };
-
-  //   let authorization_code = "";
-
-  //   fetch(urlSpotify, authParameters) //next save the token
-  //     .then((response) => response.json())
-  //     .then((data) => {
-  //       console.log(data);
-  //       authorization_code = data.access_token;
-  //       setFinalCode(data.access_token);
-  //     })
-  //     .catch((error) => console.log(error));
-  // };
-
   const getMe = () => {
     const storedCode = localStorage.getItem("finalAccessToken");
-    
+
     fetch("https://api.spotify.com/v1/me", {
       method: "GET",
       headers: {
@@ -140,7 +114,27 @@ const useSpotifyApi = (url, token) => {
       })
       .catch((error) => console.log(error));
   };
-  return { getToken, searchTrack, login, getMe };
+
+  const getFollowPlaylist = () => {
+    const storedCode = localStorage.getItem("finalAccessToken");
+
+    fetch("https://api.spotify.com/v1/me/playlists", {
+      method: "GET",
+      headers: {
+        Authorization: "Bearer " + storedCode,
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(data);
+        //save in local storage
+        localStorage.setItem("user", JSON.stringify(data));
+        return data;
+      })
+      .catch((error) => console.log(error));
+  };
+
+  return { getToken, searchTrack, login, getMe, getFollowPlaylist };
 };
 
 export default useSpotifyApi;
