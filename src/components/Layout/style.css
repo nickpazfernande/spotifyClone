@@ -1,3 +1,55 @@
-.text-white{
-    color: #fff;
+@import url("https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,400;0,700;1,700&display=swap");
+
+.text-white {
+  color: #fff;
+}
+
+.active {
+  /* Active darkmode */
+  background-color: #303030;
+  color: #fff;
+}
+
+.navBar {
+  display: flex;
+  flex-direction: column-reverse;
+  align-items: flex-end !important;
+  justify-content: center;
+}
+
+.button-login {
+  height: 45px;
+  width: 85px;
+  background-color: #fff;
+  color: #000;
+  border-radius: 20px;
+  padding: 5px 10px;
+  margin: 0 10px;
+  font-weight: bold;
+  font-size: 14px;
+  font-family: "Roboto", sans-serif;
+  border: none;
+}
+
+.button-login:hover {
+  background-color: #000;
+  color: #fff;
+  cursor: pointer;
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  color: white;
+  background-color: #000;
+  border-radius: 20px;
+  padding: 5px 10px;
+}
+
+.img-perfil {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
 }

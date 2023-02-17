@@ -1,4 +1,4 @@
-import * as React from "react";
+import React, { useState, useEffect } from "react";
 import Box from "@mui/material/Box";
 import Drawer from "@mui/material/Drawer";
 import CssBaseline from "@mui/material/CssBaseline";
@@ -17,13 +17,59 @@ import HomeIcon from "@mui/icons-material/Home";
 import LoginIcon from "@mui/icons-material/Login";
 import SearchIcon from "@mui/icons-material/Search";
 import { ThemeProvider } from "@mui/material/styles";
+import LibraryMusicIcon from "@mui/icons-material/LibraryMusic";
 import theme from "../../theme/theme";
-import { Outlet, Link } from "react-router-dom";
+import { Outlet, Link, useLocation } from "react-router-dom";
+import useSpotifyApi from "../../hooks/useSpotifyApi";
+
 import "./style.css";
 
 const drawerWidth = 240;
 
 export default function PermanentDrawerLeft(props) {
+  const location = useLocation();
+  const [active, setActive] = useState("/");
+
+  const [code, setCode] = useState(null);
+  const [accessToken, setAccessToken] = useState(null);
+  const [refreshToken, setRefreshToken] = useState(null);
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [user, setUser] = useState(null);
+  const { getToken, searchTrack, login, data, getMe } = useSpotifyApi();
+
+  useEffect(() => {
+    setActive(location.pathname);
+  }, [location]);
+
+  useEffect(() => {
+    // If there is no code, check for one in the URL
+    const code = new URL(window.location.href).searchParams.get("code");
+    // exist code ? set in local storage
+    if (code) {
+      console.log("code", code);
+      // set in local storage
+      localStorage.setItem("code", code);
+    }
+    // Get the code from local storage
+    const storedCode = localStorage.getItem("code");
+    // If there is a code, set it to the state
+    if (storedCode) {
+      setCode(storedCode);
+    }
+    //Get info user from local storage, if exists
+    const storedUser = localStorage.getItem("user");
+    if (
+      storedUser &&
+      storedUser !== '{"error":{"status":401,"message":"Invalid access token"}}'
+    ) {
+      //storedUSer to json, and save in state
+      setUser(JSON.parse(storedUser));
+      console.log(JSON.parse(storedUser));
+    }
+    getMe();
+  }, []);
+
   return (
     <ThemeProvider theme={theme}>
       <Box sx={{ display: "flex" }}>
@@ -36,17 +82,22 @@ export default function PermanentDrawerLeft(props) {
             bgcolor: "background.default",
           }}
         >
-          <Toolbar>
-            <Typography
-              variant="h6"
-              noWrap
-              component="div"
-              className="text-white"
-              //Align items to the right
-              sx={{ flexGrow: 1, textAlign: "right" }}
-            >
-              Spotify Clone
-            </Typography>
+          <Toolbar className="navBar">
+            {user != null ? (
+              <div className="user-info">
+                <img
+                  src={user.images[0].url}
+                  className="img-perfil"
+                  width="10px"
+                  alt=""
+                />
+                {user.display_name}
+              </div>
+            ) : (
+              <button className="button-login" onClick={() => login()}>
+                Log In
+              </button>
+            )}
           </Toolbar>
         </AppBar>
         <Drawer
@@ -64,7 +115,7 @@ export default function PermanentDrawerLeft(props) {
           <Toolbar />
           <Divider />
           <List>
-            <ListItem>
+            <ListItem className={active === "/" ? "active" : ""}>
               <ListItemButton component={Link} to="/">
                 <ListItemIcon>
                   <HomeIcon />
@@ -73,7 +124,7 @@ export default function PermanentDrawerLeft(props) {
               </ListItemButton>
             </ListItem>
 
-            <ListItem>
+            <ListItem className={active === "/login" ? "active" : ""}>
               <ListItemButton component={Link} to="/login">
                 <ListItemIcon>
                   <LoginIcon />
@@ -82,12 +133,8 @@ export default function PermanentDrawerLeft(props) {
               </ListItemButton>
             </ListItem>
 
-            <ListItem>
-              <ListItemButton
-                component={Link}
-                to="/search"
-                //Active?
-              >
+            <ListItem className={active === "/search" ? "active" : ""}>
+              <ListItemButton component={Link} to="/search">
                 <ListItemIcon>
                   <SearchIcon />
                 </ListItemIcon>
@@ -95,12 +142,12 @@ export default function PermanentDrawerLeft(props) {
               </ListItemButton>
             </ListItem>
 
-            <ListItem>
-              <ListItemButton>
+            <ListItem className={active === "/your-library" ? "active" : ""}>
+              <ListItemButton component={Link} to="/your-library">
                 <ListItemIcon>
-                  <HomeIcon />
+                  <LibraryMusicIcon />
                 </ListItemIcon>
-                <ListItemText primary="Home" href={`/`} />
+                <ListItemText primary="Your Library"></ListItemText>
               </ListItemButton>
             </ListItem>
           </List>
@@ -121,12 +168,9 @@ export default function PermanentDrawerLeft(props) {
         <Box
           component="main"
           sx={{ flexGrow: 1, bgcolor: "background.default", p: 3 }}
+          style={{ marginTop: "64px" }}
         >
           <div>
-            <p></p>
-            {props.children}
-
-            {/* Outlet react router */}
             <Outlet />
           </div>
         </Box>
